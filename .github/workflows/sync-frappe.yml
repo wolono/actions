@@ -12,7 +12,6 @@ jobs:
       - name: 检出目标仓库
         run: |
           git clone https://atomgit.com/frappe/frappe.git target-repo
-          cd target-repo
 
       - name: 添加上游仓库
         run: |
