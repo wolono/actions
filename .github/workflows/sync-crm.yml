@@ -9,20 +9,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: 检查目标仓库是否存在
-        id: check_repo
-        run: |
-          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -u "${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}" https://atomgit.com/frappe/crm.git)
-          echo "::set-output name=repo_exists::$RESPONSE"
-
-      - name: 创建目标仓库
-        if: steps.check_repo.outputs.repo_exists != '200'
-        run: |
-          curl -u "${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}" -d '{"name": "crm"}' https://atomgit.com/api/v1/repos
-
       - name: 检出上游仓库
         run: |
-          git clone --mirror https://github.com/frappe/crm.git upstream-repo
+          git clone https://github.com/frappe/crm.git upstream-repo
 
       - name: 检出目标仓库
         run: |
@@ -34,8 +23,14 @@ jobs:
           git config user.name "wolone"  # 设置用户名
           git config user.email "71954466@qq.com"  # 设置邮箱
 
-      - name: 推送上游的所有分支到目标仓库
+      - name: 推送 develop 分支到目标仓库
         run: |
           cd upstream-repo
-          git remote add target ../target-repo  # 添加目标仓库为远程
-          git push --force --all target  # 强制推送所有分支到目标仓库
+          git checkout develop  # 切换到 develop 分支
+          git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/crm.git develop  # 强制推送到目标仓库
+
+      - name: 推送 main 分支到目标仓库
+        run: |
+          cd upstream-repo
+          git checkout main  # 切换到 main 分支
+          git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/crm.git main  # 强制推送到目标仓库
