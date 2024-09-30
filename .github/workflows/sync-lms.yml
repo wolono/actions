@@ -32,5 +32,5 @@ jobs:
         run: |
           cd upstream-repo
           for branch in $(git branch -r | grep 'origin/' | sed 's/origin\///'); do
-            git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/lms.git $branch:refs/heads/$branch  # 强制推送每个分支到目标仓库
+            git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/lms.git $branch:$branch  # 强制推送每个分支到目标仓库
           done
