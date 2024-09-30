@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: 检出上游仓库
         run: |
-          git clone --mirror https://github.com/frappe/lms.git upstream-repo
+          git clone https://github.com/frappe/lms.git upstream-repo
 
       - name: 检出目标仓库
         run: |
@@ -23,8 +23,8 @@ jobs:
           git config user.name "wolone"  # 设置用户名
           git config user.email "71954466@qq.com"  # 设置邮箱
 
-      - name: 推送所有分支和标签到目标仓库
+      - name: 推送 develop 分支到目标仓库
         run: |
           cd upstream-repo
-          git remote add target ../target-repo  # 添加目标仓库为远程
-          git push --force --mirror target  # 强制推送所有分支和标签到目标仓库
+          git checkout develop  # 切换到 develop 分支
+          git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/lms.git develop  # 强制推送到目标仓库
