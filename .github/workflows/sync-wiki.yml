@@ -1,0 +1,30 @@
+name: 同步Wiki
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天执行一次
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出上游 wiki 仓库
+        run: |
+          git clone https://github.com/frappe/wiki.git upstream-repo
+
+      - name: 检出目标 wiki 仓库
+        run: |
+          git clone https://atomgit.com/frappe/wiki.git target-repo
+
+      - name: 配置 Git 用户信息
+        run: |
+          cd target-repo
+          git config user.name "wolone"  # 设置用户名
+          git config user.email "71954466@qq.com"  # 设置邮箱
+
+      - name: 推送 master 分支到目标仓库
+        run: |
+          cd upstream-repo
+          git checkout master  # 切换到 master 分支
+          git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/wiki.git master  # 强制推送到目标仓库
