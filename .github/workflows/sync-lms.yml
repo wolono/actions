@@ -9,15 +9,18 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: 检出上游仓库
+        run: |
+          git clone https://github.com/frappe/lms.git upstream-repo
+
       - name: 检出目标仓库
         run: |
           git clone https://atomgit.com/frappe/lms.git target-repo
 
-      - name: 添加上游仓库
+      - name: 添加上游仓库为远程
         run: |
           cd target-repo
-          git remote add frappe https://github.com/frappe/lms.git
-          git fetch frappe
+          git remote add upstream ../upstream-repo  # 添加上游仓库为远程
 
       - name: 配置 Git 用户信息
         run: |
@@ -25,8 +28,8 @@ jobs:
           git config user.name "wolone"  # 设置用户名
           git config user.email "71954466@qq.com"  # 设置邮箱
 
-      - name: 同步整个仓库
+      - name: 拉取上游更新并推送到目标仓库
         run: |
           cd target-repo
-          git fetch --all  # 获取所有远程分支
+          git fetch upstream  # 获取上游更新
           git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/lms.git --all  # 强制推送所有分支到目标仓库
