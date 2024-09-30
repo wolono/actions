@@ -17,10 +17,10 @@ jobs:
         run: |
           git clone https://atomgit.com/frappe/lms.git target-repo
 
-      - name: 添加上游仓库为远程
+      - name: 添加目标仓库为远程
         run: |
-          cd target-repo
-          git remote add upstream ../upstream-repo  # 添加上游仓库为远程
+          cd upstream-repo
+          git remote add target ../target-repo  # 添加目标仓库为远程
 
       - name: 配置 Git 用户信息
         run: |
@@ -30,6 +30,6 @@ jobs:
 
       - name: 拉取上游更新并推送到目标仓库
         run: |
-          cd target-repo
-          git fetch upstream  # 获取上游更新
+          cd upstream-repo
+          git fetch --all  # 获取上游更新
           git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/lms.git --all  # 强制推送所有分支到目标仓库
