@@ -1,0 +1,37 @@
+name: 同步NVM
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天执行一次
+  workflow_dispatch:  # 手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出上游 nvm 仓库
+        run: |
+          git clone https://github.com/nvm-sh/nvm.git upstream-repo
+
+      - name: 检出目标 nvm 仓库
+        run: |
+          git clone https://atomgit.com/nvm-sh/nvm.git target-repo
+
+      - name: 配置 Git 用户信息
+        run: |
+          cd target-repo
+          git config user.name "wolone"  # 设置用户名
+          git config user.email "71954466@qq.com"  # 设置邮箱
+
+      - name: 合并上游仓库到目标仓库
+        run: |
+          cd target-repo
+          git remote add upstream https://github.com/nvm-sh/nvm.git
+          git fetch upstream
+          git checkout master
+          git merge upstream/master  # 合并上游的 master 分支
+
+      - name: 推送 master 分支到目标仓库
+        run: |
+          cd target-repo
+          git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/nvm-sh/nvm.git master  # 强制推送到目标仓库
