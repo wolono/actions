@@ -28,3 +28,9 @@ jobs:
           cd upstream-repo
           git checkout develop  # 切换到 develop 分支
           git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/lms.git develop  # 强制推送到目标仓库
+
+      - name: 推送 main 分支到目标仓库
+        run: |
+          cd upstream-repo
+          git checkout main  # 切换到 main 分支
+          git push --force https://${{ secrets.TARGET_REPO_USERNAME }}:${{ secrets.TARGET_REPO_PASSWORD }}@atomgit.com/frappe/lms.git main  # 强制推送到目标仓库
